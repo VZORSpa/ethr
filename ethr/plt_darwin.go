@@ -1,11 +1,12 @@
+//go:build darwin
 // +build darwin
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 // See LICENSE.txt file in the project root for full license information.
-//-----------------------------------------------------------------------------
-package main
+// -----------------------------------------------------------------------------
+package ethr
 
 import (
 	"bytes"
@@ -13,14 +14,13 @@ import (
 	"net"
 	"syscall"
 
-	tm "github.com/nsf/termbox-go"
 	"golang.org/x/sys/unix"
 )
 
 func getNetDevStats(stats *ethrNetStat) {
 	ifs, err := net.Interfaces()
 	if err != nil {
-		ui.printErr("%v", err)
+		//ui.printErr("%v", err)
 		return
 	}
 
@@ -28,19 +28,23 @@ func getNetDevStats(stats *ethrNetStat) {
 		if iface.Flags&net.FlagUp == 0 {
 			continue
 		}
-
 		ifaceData, err := getIfaceData(iface.Index)
 		if err != nil {
-			ui.printErr("Failed to load data for interface %q: %v", iface.Name, err)
+			//ui.printErr("Failed to load data for interface %q: %v", iface.Name, err)
 			continue
 		}
 
 		stats.netDevStats = append(stats.netDevStats, ethrNetDevStat{
 			interfaceName: iface.Name,
-			rxBytes:       ifaceData.Data.Ibytes,
-			rxPkts:        ifaceData.Data.Ipackets,
-			txBytes:       ifaceData.Data.Obytes,
-			txPkts:        ifaceData.Data.Opackets,
+
+			rxBytes:   ifaceData.Data.Ibytes,
+			rxPkts:    ifaceData.Data.Ipackets,
+			txBytes:   ifaceData.Data.Obytes,
+			txPkts:    ifaceData.Data.Opackets,
+			rxErrPkts: ifaceData.Data.Ierrors,
+			txErrPkts: ifaceData.Data.Oerrors,
+			flags:     iface.Flags,
+			hwAddr:    iface.HardwareAddr,
 		})
 	}
 }
@@ -59,13 +63,6 @@ func getTCPStats(stats *ethrNetStat) {
 	// return the TCP Retransmits
 	stats.tcpStats.segRetrans = uint64(data.Sndrexmitpack)
 	return
-}
-
-func hideCursor() {
-	tm.SetCursor(0, 0)
-}
-
-func blockWindowResize() {
 }
 
 func getIfaceData(index int) (*ifMsghdr2, error) {
@@ -363,34 +360,9 @@ type tcpStat struct {
 func setSockOptInt(fd uintptr, level, opt, val int) (err error) {
 	err = syscall.SetsockoptInt(int(fd), level, opt, val)
 	if err != nil {
-		ui.printErr("Failed to set socket option (%v) to value (%v) during Dial. Error: %s", opt, val, err)
+		//ui.printErr("Failed to set socket option (%v) to value (%v) during Dial. Error: %s", opt, val, err)
 	}
 	return
-}
-
-func IcmpNewConn(address string) (net.PacketConn, error) {
-	dialedConn, err := net.Dial(Icmp(), address)
-	if err != nil {
-		return nil, err
-	}
-	localAddr := dialedConn.LocalAddr()
-	dialedConn.Close()
-	conn, err := net.ListenPacket(Icmp(), localAddr.String())
-	if err != nil {
-		return nil, err
-	}
-	return conn, nil
-}
-
-func VerifyPermissionForTest(testID EthrTestID) {
-	if testID.Protocol == ICMP || (testID.Protocol == TCP &&
-		(testID.Type == TraceRoute || testID.Type == MyTraceRoute)) {
-		if !IsAdmin() {
-			ui.printMsg("Warning: You are not running as administrator. For %s based %s",
-				protoToString(testID.Protocol), testToString(testID.Type))
-			ui.printMsg("test, running as administrator is required.\n")
-		}
-	}
 }
 
 func IsAdmin() bool {

@@ -1,11 +1,12 @@
+//go:build linux
 // +build linux
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 // See LICENSE.txt file in the project root for full license information.
-//-----------------------------------------------------------------------------
-package main
+// -----------------------------------------------------------------------------
+package ethr
 
 import (
 	"bufio"
@@ -14,8 +15,6 @@ import (
 	"strconv"
 	"strings"
 	"syscall"
-
-	tm "github.com/nsf/termbox-go"
 )
 
 type ethrNetDevInfo struct {
@@ -35,13 +34,11 @@ type osStats struct {
 func getNetDevStats(stats *ethrNetStat) {
 	ifs, err := net.Interfaces()
 	if err != nil {
-		ui.printErr("%v", err)
 		return
 	}
 
 	netStatsFile, err := os.Open("/proc/net/dev")
 	if err != nil {
-		ui.printErr("%v", err)
 		return
 	}
 	defer netStatsFile.Close()
@@ -61,6 +58,8 @@ func getNetDevStats(stats *ethrNetStat) {
 			continue
 		}
 		netDevStat := buildNetDevStat(line)
+		netDevStat.flags = getFlags(netDevStat.interfaceName, ifs)
+		netDevStat.hwAddr = getHWAddr(netDevStat.interfaceName, ifs)
 		if isIfUp(netDevStat.interfaceName, ifs) {
 			stats.netDevStats = append(stats.netDevStats, buildNetDevStat(line))
 		}
@@ -70,7 +69,6 @@ func getNetDevStats(stats *ethrNetStat) {
 func getTCPStats(stats *ethrNetStat) {
 	snmpStatsFile, err := os.Open("/proc/net/snmp")
 	if err != nil {
-		ui.printDbg("%v", err)
 		return
 	}
 	defer snmpStatsFile.Close()
@@ -95,10 +93,6 @@ func getTCPStats(stats *ethrNetStat) {
 	}
 }
 
-func hideCursor() {
-	tm.SetCursor(0, 0)
-}
-
 func blockWindowResize() {
 }
 
@@ -116,6 +110,10 @@ func buildNetDevStat(line string) ethrNetDevStat {
 		txBytes:       txInfo.bytes,
 		rxPkts:        rxInfo.packets,
 		txPkts:        txInfo.packets,
+		txErrPkts:     txInfo.errs,
+		rxErrPkts:     rxInfo.errs,
+		rxDrops:       rxInfo.drop,
+		txDrops:       txInfo.drop,
 	}
 }
 
@@ -135,7 +133,6 @@ func toNetDevInfo(fields []string) ethrNetDevInfo {
 func toUInt64(str string) uint64 {
 	res, err := strconv.ParseUint(str, 10, 64)
 	if err != nil {
-		ui.printDbg("Error in string conversion: %v", err)
 		return 0
 	}
 	return res
@@ -152,11 +149,27 @@ func isIfUp(ifName string, ifs []net.Interface) bool {
 	}
 	return false
 }
+func getFlags(ifName string, ifs []net.Interface) *net.Flags {
+	for _, ifi := range ifs {
+		if ifi.Name == ifName {
+			return &ifi.Flags
+		}
+	}
+	return 0
+}
+func getHWAddr(ifName string, ifs []net.Interface) net.HardwareAddr {
+	for _, ifi := range ifs {
+		if ifi.Name == ifName {
+
+			return ifi.HardwareAddr
+		}
+	}
+	return nil
+}
 
 func setSockOptInt(fd uintptr, level, opt, val int) (err error) {
 	err = syscall.SetsockoptInt(int(fd), level, opt, val)
 	if err != nil {
-		ui.printErr("Failed to set socket option (%v) to value (%v) during Dial. Error: %s", opt, val, err)
 	}
 	return
 }
@@ -179,9 +192,7 @@ func VerifyPermissionForTest(testID EthrTestID) {
 	if testID.Protocol == ICMP || (testID.Protocol == TCP &&
 		(testID.Type == TraceRoute || testID.Type == MyTraceRoute)) {
 		if !IsAdmin() {
-			ui.printMsg("Warning: You are not running as administrator. For %s based %s",
-				protoToString(testID.Protocol), testToString(testID.Type))
-			ui.printMsg("test, running as administrator is required.\n")
+
 		}
 	}
 }

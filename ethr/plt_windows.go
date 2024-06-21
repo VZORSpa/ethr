@@ -1,11 +1,12 @@
+//go:build windows
 // +build windows
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (C) Microsoft. All rights reserved.
 // Licensed under the MIT license.
 // See LICENSE.txt file in the project root for full license information.
-//-----------------------------------------------------------------------------
-package main
+// -----------------------------------------------------------------------------
+package ethr
 
 import (
 	"context"
@@ -14,8 +15,6 @@ import (
 	"strings"
 	"syscall"
 	"unsafe"
-
-	tm "github.com/nsf/termbox-go"
 )
 
 var (
@@ -40,17 +39,16 @@ type ethrNetDevInfo struct {
 func getNetDevStats(stats *ethrNetStat) {
 	ifs, err := net.Interfaces()
 	if err != nil {
-		ui.printErr("%v", err)
 		return
 	}
 
 	for _, ifi := range ifs {
+
 		if (ifi.Flags&net.FlagUp) == 0 || strings.Contains(ifi.Name, "Pseudo") {
 			continue
 		}
 		row, err := getIfEntry2(uint32(ifi.Index))
 		if err != nil {
-			ui.printErr("%v", err)
 			return
 		}
 		rxInfo := ethrNetDevInfo{
@@ -71,6 +69,12 @@ func getNetDevStats(stats *ethrNetStat) {
 			txBytes:       txInfo.bytes,
 			rxPkts:        rxInfo.packets,
 			txPkts:        txInfo.packets,
+			txErrPkts:     txInfo.errs,
+			rxErrPkts:     rxInfo.errs,
+			txDrops:       txInfo.drop,
+			rxDrops:       rxInfo.drop,
+			flags:         ifi.Flags,
+			hwAddr:        ifi.HardwareAddr,
 		}
 		stats.netDevStats = append(stats.netDevStats, netStats)
 	}
@@ -182,10 +186,6 @@ func getIfEntry2(ifIndex uint32) (mibIfRow2, error) {
 	return *res, nil
 }
 
-func hideCursor() {
-	tm.HideCursor()
-}
-
 const (
 	MF_BYCOMMAND = 0x00000000
 	SC_CLOSE     = 0xF060
@@ -212,7 +212,6 @@ func blockWindowResize() {
 func setSockOptInt(fd uintptr, level, opt, val int) (err error) {
 	err = syscall.SetsockoptInt(syscall.Handle(fd), level, opt, val)
 	if err != nil {
-		ui.printErr("Failed to set socket option (%v) to value (%v) during Dial. Error: %s", opt, val, err)
 	}
 	return
 }
@@ -271,9 +270,7 @@ func VerifyPermissionForTest(testID EthrTestID) {
 	if (testID.Type == TraceRoute || testID.Type == MyTraceRoute) &&
 		(testID.Protocol == TCP) {
 		if !IsAdmin() {
-			ui.printMsg("Warning: You are not running as administrator. For %s based %s",
-				protoToString(testID.Protocol), testToString(testID.Type))
-			ui.printMsg("test, running as administrator is required.\n")
+
 		}
 	}
 }
@@ -281,7 +278,6 @@ func VerifyPermissionForTest(testID EthrTestID) {
 func IsAdmin() bool {
 	c, err := os.Open("\\\\.\\PHYSICALDRIVE0")
 	if err != nil {
-		ui.printDbg("Process is not running as admin. Error: %v", err)
 		return false
 	}
 	c.Close()
