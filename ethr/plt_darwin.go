@@ -17,11 +17,11 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func getNetDevStats(stats *ethrNetStat) {
+func getNetDevStats(stats *ethrNetStat) error {
 	ifs, err := net.Interfaces()
 	if err != nil {
 		//ui.printErr("%v", err)
-		return
+		return err
 	}
 
 	for _, iface := range ifs {
@@ -47,6 +47,7 @@ func getNetDevStats(stats *ethrNetStat) {
 			hwAddr:    iface.HardwareAddr,
 		})
 	}
+	return nil
 }
 
 func getTCPStats(stats *ethrNetStat) {
