@@ -64,17 +64,17 @@ func getNetDevStats(stats *EthrNetStat) {
 			errs:    uint64(row.OutErrors),
 		}
 		netStats := EthrNetDevStat{
-			interfaceName: ifi.Name,
-			rxBytes:       rxInfo.bytes,
-			txBytes:       txInfo.bytes,
-			rxPkts:        rxInfo.packets,
-			txPkts:        txInfo.packets,
-			txErrPkts:     txInfo.errs,
-			rxErrPkts:     rxInfo.errs,
-			txDrops:       txInfo.drop,
-			rxDrops:       rxInfo.drop,
-			flags:         ifi.Flags,
-			hwAddr:        ifi.HardwareAddr,
+			InterfaceName: ifi.Name,
+			RxBytes:       rxInfo.bytes,
+			TxBytes:       txInfo.bytes,
+			RxPkts:        rxInfo.packets,
+			TxPkts:        txInfo.packets,
+			TxErrPkts:     txInfo.errs,
+			RxErrPkts:     rxInfo.errs,
+			TxDrops:       txInfo.drop,
+			RxDrops:       rxInfo.drop,
+			Flags:         ifi.Flags,
+			HwAddr:        ifi.HardwareAddr,
 		}
 		stats.NetDevStats = append(stats.NetDevStats, netStats)
 	}

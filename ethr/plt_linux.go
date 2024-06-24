@@ -58,9 +58,9 @@ func getNetDevStats(stats *EthrNetStat) {
 			continue
 		}
 		netDevStat := buildNetDevStat(line)
-		netDevStat.flags = getFlags(netDevStat.interfaceName, ifs)
-		netDevStat.hwAddr = getHWAddr(netDevStat.interfaceName, ifs)
-		if isIfUp(netDevStat.interfaceName, ifs) {
+		netDevStat.Flags = getFlags(netDevStat.InterfaceName, ifs)
+		netDevStat.HwAddr = getHWAddr(netDevStat.InterfaceName, ifs)
+		if isIfUp(netDevStat.InterfaceName, ifs) {
 			stats.NetDevStats = append(stats.NetDevStats, buildNetDevStat(line))
 		}
 	}
@@ -105,15 +105,15 @@ func buildNetDevStat(line string) EthrNetDevStat {
 	rxInfo := toNetDevInfo(fields[1:9])
 	txInfo := toNetDevInfo(fields[9:17])
 	return EthrNetDevStat{
-		interfaceName: interfaceName,
-		rxBytes:       rxInfo.bytes,
-		txBytes:       txInfo.bytes,
-		rxPkts:        rxInfo.packets,
-		txPkts:        txInfo.packets,
-		txErrPkts:     txInfo.errs,
-		rxErrPkts:     rxInfo.errs,
-		rxDrops:       rxInfo.drop,
-		txDrops:       txInfo.drop,
+		InterfaceName: interfaceName,
+		RxBytes:       rxInfo.bytes,
+		TxBytes:       txInfo.bytes,
+		RxPkts:        rxInfo.packets,
+		TxPkts:        txInfo.packets,
+		TxErrPkts:     txInfo.errs,
+		RxErrPkts:     rxInfo.errs,
+		RxDrops:       rxInfo.drop,
+		TxDrops:       txInfo.drop,
 	}
 }
 

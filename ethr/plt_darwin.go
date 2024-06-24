@@ -35,16 +35,16 @@ func getNetDevStats(stats *EthrNetStat) error {
 		}
 
 		stats.NetDevStats = append(stats.NetDevStats, EthrNetDevStat{
-			interfaceName: iface.Name,
+			InterfaceName: iface.Name,
 
-			rxBytes:   ifaceData.Data.Ibytes,
-			rxPkts:    ifaceData.Data.Ipackets,
-			txBytes:   ifaceData.Data.Obytes,
-			txPkts:    ifaceData.Data.Opackets,
-			rxErrPkts: ifaceData.Data.Ierrors,
-			txErrPkts: ifaceData.Data.Oerrors,
-			flags:     iface.Flags,
-			hwAddr:    iface.HardwareAddr,
+			RxBytes:   ifaceData.Data.Ibytes,
+			RxPkts:    ifaceData.Data.Ipackets,
+			TxBytes:   ifaceData.Data.Obytes,
+			TxPkts:    ifaceData.Data.Opackets,
+			RxErrPkts: ifaceData.Data.Ierrors,
+			TxErrPkts: ifaceData.Data.Oerrors,
+			Flags:     iface.Flags,
+			HwAddr:    iface.HardwareAddr,
 		})
 	}
 	return nil

@@ -22,7 +22,7 @@ func TestNWTool(t *testing.T) {
 	}
 
 	for c := range data.NetDevStats {
-		log.Printf("%+v %v %s", data.NetDevStats[c], data.NetDevStats[c].flags&net.FlagPointToPoint, data.NetDevStats[c].hwAddr)
+		log.Printf("%+v %v %s", data.NetDevStats[c], data.NetDevStats[c].Flags&net.FlagPointToPoint, data.NetDevStats[c].HwAddr)
 
 	}
 }

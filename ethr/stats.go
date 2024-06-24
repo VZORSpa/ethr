@@ -15,17 +15,17 @@ type EthrNetStat struct {
 }
 
 type EthrNetDevStat struct {
-	interfaceName string
-	hwAddr        net.HardwareAddr
-	rxBytes       uint64
-	txBytes       uint64
-	rxPkts        uint64
-	txPkts        uint64
-	txErrPkts     uint64
-	rxErrPkts     uint64
-	txDrops       uint64
-	rxDrops       uint64
-	flags         net.Flags
+	InterfaceName string
+	HwAddr        net.HardwareAddr
+	RxBytes       uint64
+	TxBytes       uint64
+	RxPkts        uint64
+	TxPkts        uint64
+	TxErrPkts     uint64
+	RxErrPkts     uint64
+	TxDrops       uint64
+	RxDrops       uint64
+	Flags         net.Flags
 }
 
 type ethrTCPStat struct {
@@ -34,39 +34,39 @@ type ethrTCPStat struct {
 
 func getNetDevStatDiff(curStats EthrNetDevStat, prevNetStats EthrNetStat, seconds uint64) EthrNetDevStat {
 	for _, prevStats := range prevNetStats.NetDevStats {
-		if prevStats.interfaceName != curStats.interfaceName {
+		if prevStats.InterfaceName != curStats.InterfaceName {
 			continue
 		}
 
-		if curStats.rxBytes >= prevStats.rxBytes {
-			curStats.rxBytes -= prevStats.rxBytes
+		if curStats.RxBytes >= prevStats.RxBytes {
+			curStats.RxBytes -= prevStats.RxBytes
 		} else {
-			curStats.rxBytes += (^uint64(0) - prevStats.rxBytes)
+			curStats.RxBytes += (^uint64(0) - prevStats.RxBytes)
 		}
 
-		if curStats.txBytes >= prevStats.txBytes {
-			curStats.txBytes -= prevStats.txBytes
+		if curStats.TxBytes >= prevStats.TxBytes {
+			curStats.TxBytes -= prevStats.TxBytes
 		} else {
-			curStats.txBytes += (^uint64(0) - prevStats.txBytes)
+			curStats.TxBytes += (^uint64(0) - prevStats.TxBytes)
 		}
 
-		if curStats.rxPkts >= prevStats.rxPkts {
-			curStats.rxPkts -= prevStats.rxPkts
+		if curStats.RxPkts >= prevStats.RxPkts {
+			curStats.RxPkts -= prevStats.RxPkts
 		} else {
-			curStats.rxPkts += (^uint64(0) - prevStats.rxPkts)
+			curStats.RxPkts += (^uint64(0) - prevStats.RxPkts)
 		}
 
-		if curStats.txPkts >= prevStats.txPkts {
-			curStats.txPkts -= prevStats.txPkts
+		if curStats.TxPkts >= prevStats.TxPkts {
+			curStats.TxPkts -= prevStats.TxPkts
 		} else {
-			curStats.txPkts += (^uint64(0) - prevStats.txPkts)
+			curStats.TxPkts += (^uint64(0) - prevStats.TxPkts)
 		}
 
 		break
 	}
-	curStats.rxBytes /= seconds
-	curStats.txBytes /= seconds
-	curStats.rxPkts /= seconds
-	curStats.txPkts /= seconds
+	curStats.RxBytes /= seconds
+	curStats.TxBytes /= seconds
+	curStats.RxPkts /= seconds
+	curStats.TxPkts /= seconds
 	return curStats
 }
