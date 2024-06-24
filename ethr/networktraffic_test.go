@@ -21,8 +21,8 @@ func TestNWTool(t *testing.T) {
 		t.FailNow()
 	}
 
-	for c := range data.netDevStats {
-		log.Printf("%+v %v %s", data.netDevStats[c], data.netDevStats[c].flags&net.FlagPointToPoint, data.netDevStats[c].hwAddr)
+	for c := range data.NetDevStats {
+		log.Printf("%+v %v %s", data.NetDevStats[c], data.NetDevStats[c].flags&net.FlagPointToPoint, data.NetDevStats[c].hwAddr)
 
 	}
 }

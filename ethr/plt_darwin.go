@@ -34,7 +34,7 @@ func getNetDevStats(stats *EthrNetStat) error {
 			continue
 		}
 
-		stats.netDevStats = append(stats.netDevStats, EthrNetDevStat{
+		stats.NetDevStats = append(stats.NetDevStats, EthrNetDevStat{
 			interfaceName: iface.Name,
 
 			rxBytes:   ifaceData.Data.Ibytes,

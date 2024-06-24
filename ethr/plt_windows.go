@@ -76,7 +76,7 @@ func getNetDevStats(stats *EthrNetStat) {
 			flags:         ifi.Flags,
 			hwAddr:        ifi.HardwareAddr,
 		}
-		stats.netDevStats = append(stats.netDevStats, netStats)
+		stats.NetDevStats = append(stats.NetDevStats, netStats)
 	}
 }
 

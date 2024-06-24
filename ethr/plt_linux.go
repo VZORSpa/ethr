@@ -61,7 +61,7 @@ func getNetDevStats(stats *EthrNetStat) {
 		netDevStat.flags = getFlags(netDevStat.interfaceName, ifs)
 		netDevStat.hwAddr = getHWAddr(netDevStat.interfaceName, ifs)
 		if isIfUp(netDevStat.interfaceName, ifs) {
-			stats.netDevStats = append(stats.netDevStats, buildNetDevStat(line))
+			stats.NetDevStats = append(stats.NetDevStats, buildNetDevStat(line))
 		}
 	}
 }

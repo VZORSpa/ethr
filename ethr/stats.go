@@ -10,7 +10,7 @@ import (
 )
 
 type EthrNetStat struct {
-	netDevStats []EthrNetDevStat
+	NetDevStats []EthrNetDevStat
 	tcpStats    ethrTCPStat
 }
 
@@ -33,7 +33,7 @@ type ethrTCPStat struct {
 }
 
 func getNetDevStatDiff(curStats EthrNetDevStat, prevNetStats EthrNetStat, seconds uint64) EthrNetDevStat {
-	for _, prevStats := range prevNetStats.netDevStats {
+	for _, prevStats := range prevNetStats.NetDevStats {
 		if prevStats.interfaceName != curStats.interfaceName {
 			continue
 		}
