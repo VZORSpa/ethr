@@ -1,4 +1,4 @@
-module github.com/VZORSpa/go-ethr
+module github.com/VZORSpa/go-ethr/v1
 
 require (
 	golang.org/x/net v0.26.0
