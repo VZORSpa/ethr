@@ -1,7 +1,7 @@
 package ethr
 
-func GetNetworkInfo() (*ethrNetStat, error) {
-	out := ethrNetStat{}
+func GetNetworkInfo() (*EthrNetStat, error) {
+	out := EthrNetStat{}
 
 	err := getNetDevStats(&out)
 	if err != nil {

@@ -36,7 +36,7 @@ type ethrNetDevInfo struct {
 	errs    uint64
 }
 
-func getNetDevStats(stats *ethrNetStat) {
+func getNetDevStats(stats *EthrNetStat) {
 	ifs, err := net.Interfaces()
 	if err != nil {
 		return
@@ -103,7 +103,7 @@ const (
 	AF_INET6 = 23
 )
 
-func getTCPStats(stats *ethrNetStat) (errcode error) {
+func getTCPStats(stats *EthrNetStat) (errcode error) {
 	tcpStats := &mib_tcpstats{}
 	r0, _, _ := syscall.Syscall(proc_get_tcp_statistics_ex.Addr(), 2,
 		uintptr(unsafe.Pointer(tcpStats)), uintptr(AF_INET), 0)

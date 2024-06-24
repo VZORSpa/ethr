@@ -31,7 +31,7 @@ type ethrNetDevInfo struct {
 type osStats struct {
 }
 
-func getNetDevStats(stats *ethrNetStat) {
+func getNetDevStats(stats *EthrNetStat) {
 	ifs, err := net.Interfaces()
 	if err != nil {
 		return
@@ -66,7 +66,7 @@ func getNetDevStats(stats *ethrNetStat) {
 	}
 }
 
-func getTCPStats(stats *ethrNetStat) {
+func getTCPStats(stats *EthrNetStat) {
 	snmpStatsFile, err := os.Open("/proc/net/snmp")
 	if err != nil {
 		return

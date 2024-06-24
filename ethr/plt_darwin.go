@@ -17,7 +17,7 @@ import (
 	"golang.org/x/sys/unix"
 )
 
-func getNetDevStats(stats *ethrNetStat) error {
+func getNetDevStats(stats *EthrNetStat) error {
 	ifs, err := net.Interfaces()
 	if err != nil {
 		//ui.printErr("%v", err)
@@ -50,7 +50,7 @@ func getNetDevStats(stats *ethrNetStat) error {
 	return nil
 }
 
-func getTCPStats(stats *ethrNetStat) {
+func getTCPStats(stats *EthrNetStat) {
 	var data tcpStat
 	rawData, err := unix.SysctlRaw("net.inet.tcp.stats")
 	if err != nil {

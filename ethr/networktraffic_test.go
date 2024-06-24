@@ -13,7 +13,7 @@ import (
 
 func TestNWTool(t *testing.T) {
 
-	data := ethrNetStat{}
+	data := EthrNetStat{}
 	err := getNetDevStats(&data)
 
 	if err != nil {

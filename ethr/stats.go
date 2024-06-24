@@ -9,7 +9,7 @@ import (
 	"net"
 )
 
-type ethrNetStat struct {
+type EthrNetStat struct {
 	netDevStats []ethrNetDevStat
 	tcpStats    ethrTCPStat
 }
@@ -32,7 +32,7 @@ type ethrTCPStat struct {
 	segRetrans uint64
 }
 
-func getNetDevStatDiff(curStats ethrNetDevStat, prevNetStats ethrNetStat, seconds uint64) ethrNetDevStat {
+func getNetDevStatDiff(curStats ethrNetDevStat, prevNetStats EthrNetStat, seconds uint64) ethrNetDevStat {
 	for _, prevStats := range prevNetStats.netDevStats {
 		if prevStats.interfaceName != curStats.interfaceName {
 			continue
