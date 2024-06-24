@@ -63,7 +63,7 @@ func getNetDevStats(stats *EthrNetStat) {
 			drop:    uint64(row.OutDiscards),
 			errs:    uint64(row.OutErrors),
 		}
-		netStats := ethrNetDevStat{
+		netStats := EthrNetDevStat{
 			interfaceName: ifi.Name,
 			rxBytes:       rxInfo.bytes,
 			txBytes:       txInfo.bytes,

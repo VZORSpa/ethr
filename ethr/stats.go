@@ -10,11 +10,11 @@ import (
 )
 
 type EthrNetStat struct {
-	netDevStats []ethrNetDevStat
+	netDevStats []EthrNetDevStat
 	tcpStats    ethrTCPStat
 }
 
-type ethrNetDevStat struct {
+type EthrNetDevStat struct {
 	interfaceName string
 	hwAddr        net.HardwareAddr
 	rxBytes       uint64
@@ -32,7 +32,7 @@ type ethrTCPStat struct {
 	segRetrans uint64
 }
 
-func getNetDevStatDiff(curStats ethrNetDevStat, prevNetStats EthrNetStat, seconds uint64) ethrNetDevStat {
+func getNetDevStatDiff(curStats EthrNetDevStat, prevNetStats EthrNetStat, seconds uint64) EthrNetDevStat {
 	for _, prevStats := range prevNetStats.netDevStats {
 		if prevStats.interfaceName != curStats.interfaceName {
 			continue

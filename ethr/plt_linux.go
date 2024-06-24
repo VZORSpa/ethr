@@ -96,15 +96,15 @@ func getTCPStats(stats *EthrNetStat) {
 func blockWindowResize() {
 }
 
-func buildNetDevStat(line string) ethrNetDevStat {
+func buildNetDevStat(line string) EthrNetDevStat {
 	fields := strings.Fields(line)
 	if len(fields) < 17 {
-		return ethrNetDevStat{}
+		return EthrNetDevStat{}
 	}
 	interfaceName := strings.TrimSuffix(fields[0], ":")
 	rxInfo := toNetDevInfo(fields[1:9])
 	txInfo := toNetDevInfo(fields[9:17])
-	return ethrNetDevStat{
+	return EthrNetDevStat{
 		interfaceName: interfaceName,
 		rxBytes:       rxInfo.bytes,
 		txBytes:       txInfo.bytes,
